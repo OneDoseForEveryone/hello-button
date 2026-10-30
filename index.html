@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<!-- This tells the browser the page is written in modern HTML. -->
+<html lang="en">
+<head>
+  <!-- Letters and symbols (like the quotes in "hello") display correctly. -->
+  <meta charset="utf-8">
+  <!-- On a phone, the page uses the screen width instead of looking tiny. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The words shown on the browser tab. -->
+  <title>Press me</title>
+  <style>
+    /*
+      The whole page is one centered button on a slow rainbow.
+      Animations last many seconds and never blink on and off,
+      so the motion stays gentle for people sensitive to flashing.
+    */
+
+    /* Every element sizes itself from the border inward, which keeps layout simple. */
+    * {
+      box-sizing: border-box;
+    }
+
+    /* The page fills the window, hides the giant swirl that spills past the edges, and centers the button. */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      /* A rainbow wider than the screen. We slide it slowly in the animation below. */
+      background: linear-gradient(
+        120deg,
+        #ff4d6d,
+        #ff9f1c,
+        #ffe66d,
+        #7dffa6,
+        #4cc9f0,
+        #b5179e,
+        #ff4d6d
+      );
+      background-size: 400% 400%;
+      animation: rainbow-shift 32s ease-in-out infinite;
+    }
+
+    /* Moves the rainbow from one side to the other, then back. */
+    @keyframes rainbow-shift {
+      0% {
+        background-position: 0% 40%;
+      }
+      50% {
+        background-position: 100% 60%;
+      }
+      100% {
+        background-position: 0% 40%;
+      }
+    }
+
+    /*
+      Kaleidoscope layers. Each one is a huge circle of colored wedges.
+      One turns clockwise and the other turns the other way, very slowly.
+      A mask cuts a calm hole in the middle so the button stays easy to read.
+    */
+    .swirl {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 150vmax;
+      height: 150vmax;
+      margin-left: -75vmax;
+      margin-top: -75vmax;
+      border-radius: 50%;
+      pointer-events: none;
+      background: conic-gradient(
+        from 0deg,
+        #ff2d6a,
+        #ff8a00,
+        #ffe14a,
+        #3ddc84,
+        #3ec6ff,
+        #7a5cff,
+        #ff2d9a,
+        #ff2d6a
+      );
+      /* Wedges plus a clear center. "intersect" keeps only the overlapping parts of both masks. */
+      -webkit-mask-image:
+        radial-gradient(circle, transparent 0 16%, #000 30%),
+        repeating-conic-gradient(#000 0 16deg, transparent 16deg 32deg);
+      -webkit-mask-composite: source-in;
+      mask-image:
+        radial-gradient(circle, transparent 0 16%, #000 30%),
+        repeating-conic-gradient(#000 0 16deg, transparent 16deg 32deg);
+      mask-composite: intersect;
+      opacity: 0.72;
+      mix-blend-mode: multiply;
+      animation: spin 80s linear infinite;
+    }
+
+    /* A second, softer ring of thin petals and ripples, turning the opposite direction. */
+    .swirl-back {
+      width: 120vmax;
+      height: 120vmax;
+      margin-left: -60vmax;
+      margin-top: -60vmax;
+      background:
+        repeating-radial-gradient(
+          circle at 50% 50%,
+          rgba(255, 255, 255, 0.55) 0 2px,
+          transparent 10px 34px
+        ),
+        conic-gradient(
+          from 40deg,
+          #ff4d8d,
+          #ffd000,
+          #5cffc0,
+          #6aa8ff,
+          #d16bff,
+          #ff4d8d
+        );
+      -webkit-mask-image:
+        radial-gradient(circle, transparent 0 22%, #000 40%),
+        repeating-conic-gradient(from 8deg, #000 0 7deg, transparent 7deg 18deg);
+      mask-image:
+        radial-gradient(circle, transparent 0 22%, #000 40%),
+        repeating-conic-gradient(from 8deg, #000 0 7deg, transparent 7deg 18deg);
+      filter: blur(0.4px);
+      mix-blend-mode: screen;
+      opacity: 0.55;
+      animation: spin 110s linear infinite reverse;
+    }
+
+    /* One full turn. "linear" means the speed never speeds up or slows down. */
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* A soft light pool behind the button so the label never sits on a busy stripe. */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.42) 0%,
+        rgba(255, 255, 255, 0.08) 22%,
+        transparent 46%
+      );
+    }
+
+    /*
+      The button. Its colors slowly cycle through the rainbow (hue-rotate)
+      and its glow gently grows and shrinks (pulse). The words stay white.
+    */
+    button {
+      position: relative;
+      z-index: 1;
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0.9em 1.6em;
+      border-radius: 999px;
+      font: 700 clamp(2.2rem, 7vw, 4rem) / 1 "Trebuchet MS", "Segoe UI", sans-serif;
+      letter-spacing: 0.03em;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+      background:
+        radial-gradient(120% 90% at 30% 20%, rgba(255, 255, 255, 0.4), transparent 46%),
+        linear-gradient(150deg, #9f1239, #6b21a8 52%, #1e3a8a);
+      box-shadow:
+        0 0 0 10px rgba(255, 255, 255, 0.22),
+        0 0 28px rgba(255, 255, 255, 0.45),
+        0 0 56px rgba(255, 50, 150, 0.65),
+        0 14px 30px rgba(40, 0, 60, 0.28);
+      animation:
+        pulse 5.5s ease-in-out infinite,
+        hue-cycle 20s linear infinite;
+    }
+
+    /* Keyboard users get a clear ring when the button is focused. */
+    button:focus-visible {
+      outline: 4px solid #fff;
+      outline-offset: 8px;
+    }
+
+    /* A small press-in when the button is held down. */
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* Gentle breathing glow. The size change is tiny, and nothing flashes. */
+    @keyframes pulse {
+      0%,
+      100% {
+        box-shadow:
+          0 0 0 10px rgba(255, 255, 255, 0.2),
+          0 0 22px rgba(255, 255, 255, 0.35),
+          0 0 46px rgba(255, 50, 150, 0.5),
+          0 14px 30px rgba(40, 0, 60, 0.28);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow:
+          0 0 0 16px rgba(255, 255, 255, 0.28),
+          0 0 36px rgba(255, 255, 255, 0.55),
+          0 0 84px rgba(180, 60, 255, 0.72),
+          0 16px 34px rgba(40, 0, 60, 0.3);
+        transform: scale(1.045);
+      }
+    }
+
+    /* Walks the button's colors all the way around the color wheel, then repeats. */
+    @keyframes hue-cycle {
+      to {
+        filter: hue-rotate(360deg);
+      }
+    }
+
+    /* If someone has asked their device to reduce motion, hold every animation still. */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Decoration only. aria-hidden tells screen readers to skip these shapes. -->
+  <div class="swirl" aria-hidden="true"></div>
+  <div class="swirl swirl-back" aria-hidden="true"></div>
+
+  <!-- The only control on the page. type="button" means it does not submit a form. -->
+  <button type="button" id="press-me">Press me</button>
+
+  <script>
+    // Find the button we just wrote above.
+    var button = document.getElementById("press-me");
+
+    // Browsers only allow spoken audio after a person clicks or taps.
+    button.addEventListener("click", function () {
+      // If a hello is already playing, stop it so clicks do not pile up.
+      speechSynthesis.cancel();
+      // Turn the word hello into speech and play it through the speakers.
+      speechSynthesis.speak(new SpeechSynthesisUtterance('hello'));
+    });
+  </script>
+</body>
+</html>
